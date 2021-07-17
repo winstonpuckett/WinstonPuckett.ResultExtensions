@@ -7,6 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinstonPuckett.ResultExtens
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinstonPuckett.ResultExtensions.Tests", "WinstonPuckett.ResultExtensions.Tests\WinstonPuckett.ResultExtensions.Tests.csproj", "{39EF2408-601E-47D9-8728-22CEA9751920}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ProjectInformation", "ProjectInformation", "{C7248A61-1584-40C8-8508-46CCD0A07351}"
+	ProjectSection(SolutionItems) = preProject
+		supported_operations.md = supported_operations.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
