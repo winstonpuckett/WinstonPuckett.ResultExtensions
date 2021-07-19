@@ -3,9 +3,9 @@ using System;
 
 namespace WinstonPuckett.ResultExtensions.Tests
 {
-    public class TAction_HappyPath_Tests
+    public class OkTAction_HappyPath_Tests
     {
-        private readonly bool _startingProperty = false;
+        private readonly IResult<bool> _startingProperty = new Ok<bool>(false);
         private void DoNothing(bool _) { }
 
 
@@ -24,9 +24,9 @@ namespace WinstonPuckett.ResultExtensions.Tests
         }
     }
 
-    public class TAction_SadPath_Tests
+    public class OkTAction_SadPath_Tests
     {
-        private readonly bool _startingProperty = false;
+        private readonly IResult<bool> _startingProperty = new Ok<bool>(false);
         private void ThrowGeneralException(bool _) { throw new Exception(); }
         private void ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
 
@@ -57,5 +57,4 @@ namespace WinstonPuckett.ResultExtensions.Tests
             Assert.True((r as Error<bool>).Exception is NotImplementedException);
         }
     }
-
 }
