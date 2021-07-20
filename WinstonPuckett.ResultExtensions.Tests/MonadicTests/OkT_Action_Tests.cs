@@ -13,7 +13,7 @@ namespace WinstonPuckett.ResultExtensions.Tests
         public void ReturnsValueWrappedInIResult()
         {
             var r = _startingProperty.Bind(DoNothing);
-            Assert.False(r.Value);
+            Assert.False(((Ok<bool>)r).Value);
         }
      
         [Fact(DisplayName = "IResult is Ok<T>.")]
@@ -41,13 +41,6 @@ namespace WinstonPuckett.ResultExtensions.Tests
         {
             var r = _startingProperty.Bind(ThrowGeneralException);
             Assert.True(r is Error<bool>);
-        }
-        
-        [Fact(DisplayName = "Error holds starting value.")]
-        public void ErrorHoldsStartingValue()
-        {
-            var r = _startingProperty.Bind(ThrowGeneralException);
-            Assert.False(r.Value);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

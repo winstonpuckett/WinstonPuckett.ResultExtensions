@@ -6,17 +6,9 @@ namespace WinstonPuckett.ResultExtensions.Tests
     public class ErrorTAction_HappyPath_Tests
     {
         private readonly static string _initialErrorMessage = "I am the initial error message.";
-        private readonly IResult<bool> _startingProperty = new Error<bool>(false, new Exception(_initialErrorMessage));
+        private readonly IResult<bool> _startingProperty = new Error<bool>(new Exception(_initialErrorMessage));
         private void DoNothing(bool _) { }
         private void ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
-
-
-        [Fact(DisplayName = "Value contains original value.")]
-        public void ReturnsValueWrappedInIResult()
-        {
-            var r = _startingProperty.Bind(DoNothing);
-            Assert.False(r.Value);
-        }
      
         [Fact(DisplayName = "IResult is Error<T>.")]
         public void ReturnsError()

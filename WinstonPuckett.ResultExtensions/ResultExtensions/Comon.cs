@@ -18,7 +18,18 @@ namespace WinstonPuckett.ResultExtensions
             }
             catch (Exception e)
             {
-                return new Error<T>(input, e);
+                return new Error<T>(e);
+            }
+        }
+        internal static IResult<U> OkOrError<T, U>(this T input, Func<T, U> function)
+        {
+            try
+            {
+                return new Ok<U>(function(input));
+            }
+            catch (Exception e)
+            {
+                return new Error<U>(e);
             }
         }
 
