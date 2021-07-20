@@ -28,6 +28,8 @@ namespace WinstonPuckett.ResultExtensions.Tests
     public class TTaskAction_SadPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
+        private Task<bool> _cancelledStartingProperty 
+            => Task.Run(()=>false, new System.Threading.CancellationToken(true));
         private void ThrowGeneralException(bool _) => throw new Exception();
         private void ThrowNotImplementedException(bool _) => throw new NotImplementedException();
 
@@ -35,6 +37,12 @@ namespace WinstonPuckett.ResultExtensions.Tests
         public async Task ExceptionDoesNotBubble()
         {
             await _startingProperty.Bind(ThrowGeneralException);
+        }
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(ThrowGeneralException);
         }
         
         [Fact(DisplayName = "IResult is Error<T>.")]
