@@ -4,32 +4,32 @@ using System.Threading.Tasks;
 
 namespace WinstonPuckett.ResultExtensions.Tests
 {
-    public class TTaskAction_HappyPath_Tests
+    public class TTaskActionAsync_HappyPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
-        private void DoNothing(bool _) { }
+        private async Task DoNothingAsync(bool _) { await Task.Run(()=>{}); }
 
 
         [Fact(DisplayName = "Value contains original value.")]
         public async Task ReturnsValueWrappedInIResult()
         {
-            var r = await _startingProperty.Bind(DoNothing);
+            var r = await _startingProperty.Bind(DoNothingAsync);
             Assert.False(((Ok<bool>)r).Value);
         }
      
         [Fact(DisplayName = "IResult is Ok<T>.")]
         public async Task ReturnsOk()
         {
-            var r = await _startingProperty.Bind(DoNothing);
+            var r = await _startingProperty.Bind(DoNothingAsync);
             Assert.True(r is Ok<bool>);
         }
     }
 
-    public class TTaskAction_SadPath_Tests
+    public class TTaskActionAsync_SadPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
-        private void ThrowGeneralException(bool _) => throw new Exception();
-        private void ThrowNotImplementedException(bool _) => throw new NotImplementedException();
+        private async Task ThrowGeneralException(bool _) { await Task.Run(() => throw new Exception()); }
+        private async Task ThrowNotImplementedException(bool _) { await Task.Run(() => throw new NotImplementedException()); }
 
         [Fact(DisplayName = "Exception doesn't bubble.")]
         public async Task ExceptionDoesNotBubble()
