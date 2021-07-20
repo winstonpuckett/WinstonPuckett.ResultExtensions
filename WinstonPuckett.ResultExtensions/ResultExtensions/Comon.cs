@@ -45,5 +45,17 @@ namespace WinstonPuckett.ResultExtensions
                     throw new ArgumentException("Cannot determine whether input is Error or Ok. This might happen if you implement IResult. Try setting a breakpoint on the method before this error and see if it sends back an unexpected IResult type.", nameof(input));
             }
         }
+        internal static IResult<U> UnwrapThenOkOrError<T, U>(this IResult<T> input, Func<T, U> function)
+        {
+            switch (input)
+            {
+                case Ok<T> ok:
+                    return ok.Value.OkOrError(function);
+                case Error<T> error:
+                    return new Error<U>(error.Exception);
+                default:
+                    throw new ArgumentException("Cannot determine whether input is Error or Ok. This might happen if you implement IResult. Try setting a breakpoint on the method before this error and see if it sends back an unexpected IResult type.", nameof(input));
+            }
+        }
     }
 }

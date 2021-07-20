@@ -16,5 +16,8 @@ namespace WinstonPuckett.ResultExtensions
 
         public static IResult<U> Bind<T, U>(this T input, Func<T, U> function)
             => input.OkOrError(function);
+
+        public static IResult<U> Bind<T, U>(this IResult<T> input, Func<T, U> function)
+            => input.UnwrapThenOkOrError(function);
     }
 }
