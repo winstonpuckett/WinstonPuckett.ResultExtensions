@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 
 namespace WinstonPuckett.ResultExtensions
 {
@@ -30,6 +31,18 @@ namespace WinstonPuckett.ResultExtensions
             catch (Exception e)
             {
                 return new Error<U>(e);
+            }
+        }
+        internal static async Task<IResult<T>> OkOrErrorAsync<T>(this T input, Func<T, Task> function)
+        {
+            try
+            {
+                await function(input);
+                return new Ok<T>(input);
+            }
+            catch (Exception e)
+            {
+                return new Error<T>(e);
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 namespace WinstonPuckett.ResultExtensions
 {
@@ -11,6 +12,14 @@ namespace WinstonPuckett.ResultExtensions
 
         public static IResult<T> Bind<T>(this IResult<T> input, Action<T> function)
             => input.UnwrapThenOkOrError(function);
+
+        // Action Asynchronous
+
+        public static async Task<IResult<T>> Bind<T>(this Task<T> input, Action<T> function)
+            => (await input).OkOrError(function);
+
+        public static async Task<IResult<T>> Bind<T>(this T input, Func<T, Task> function)
+            => await input.OkOrErrorAsync(function);
 
         // Function Synchronous
 
