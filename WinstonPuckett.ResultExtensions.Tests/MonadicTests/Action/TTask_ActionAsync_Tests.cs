@@ -1,8 +1,9 @@
 using Xunit;
 using System;
 using System.Threading.Tasks;
+using WinstonPuckett.ResultExtensions;
 
-namespace WinstonPuckett.ResultExtensions.Tests
+namespace Monads.Actions.Tests
 {
     public class TTaskActionAsync_HappyPath_Tests
     {

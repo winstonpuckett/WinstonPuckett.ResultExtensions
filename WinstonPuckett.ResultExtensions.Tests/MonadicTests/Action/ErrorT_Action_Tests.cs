@@ -1,7 +1,8 @@
 using Xunit;
 using System;
+using WinstonPuckett.ResultExtensions;
 
-namespace WinstonPuckett.ResultExtensions.Tests
+namespace Monads.Actions.Tests
 {
     public class ErrorTAction_HappyPath_Tests
     {
