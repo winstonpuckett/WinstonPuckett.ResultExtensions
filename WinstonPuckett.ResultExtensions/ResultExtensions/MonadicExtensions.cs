@@ -76,13 +76,24 @@ namespace WinstonPuckett.ResultExtensions
             }
         }
 
-        // Task<IResult<T>> Action<T>
         public static async Task<IResult<T>> Bind<T>(this Task<IResult<T>> input, Action<T> function)
         {
             var i = await input;
             return i.Bind(function);
         }
-        // IResult<T> Func<T, Task>
+
+        public static async Task<IResult<T>> Bind<T>(this IResult<T> input, Func<T, Task> function)
+        {
+            switch (input)
+            {
+                case Ok<T> ok:
+                    return await ok.Value.Bind(function);
+                case Error<T> error:
+                    return error;
+                default:
+                    throw new ArgumentException("Cannot determine whether input is Error or Ok. This might happen if you implement IResult. Try setting a breakpoint on the method before this error and see if it sends back an unexpected IResult type.", nameof(input));
+            }
+        }
         // Task<IResult<T>> Func<T, Task>
 
         // Function Synchronous
