@@ -11,8 +11,8 @@ namespace Monads.Functions.Tests
             => !b;
 
 
-        [Fact(DisplayName = "Value contains original value.")]
-        public void ReturnsValueWrappedInIResult()
+        [Fact(DisplayName = "Value returns flip of value.")]
+        public void ReturnsFlippedValue()
         {
             var r = _startingProperty.Bind(Flip);
             Assert.Equal(!((Ok<bool>)_startingProperty).Value, ((Ok<bool>)r).Value);

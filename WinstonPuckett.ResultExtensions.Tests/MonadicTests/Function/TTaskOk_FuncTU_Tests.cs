@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Xunit;
 using WinstonPuckett.ResultExtensions;
+using Xunit;
 
 namespace Monads.Functions.Tests
 {
-    public class TTaskFuncTU_HappyPath_Tests
+    public class TaskOkTFuncTU_HappyPath_Tests
     {
-        private readonly Task<bool> _startingProperty = Task.Run(() => false);
+        private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false));
         private bool Flip(bool b)
             => !b;
 
@@ -16,7 +16,7 @@ namespace Monads.Functions.Tests
         public async Task ReturnsFlippedValue()
         {
             var r = await _startingProperty.Bind(Flip);
-            Assert.Equal(!await _startingProperty, ((Ok<bool>)r).Value);
+            Assert.Equal(!((Ok<bool>)await _startingProperty).Value, ((Ok<bool>)r).Value);
         }
 
         [Fact(DisplayName = "IResult is Ok<T>.")]
@@ -27,9 +27,9 @@ namespace Monads.Functions.Tests
         }
     }
 
-    public class TTaskFuncTU_SadPath_Tests
+    public class TaskOkTFuncTU_SadPath_Tests
     {
-        private readonly Task<bool> _startingProperty = Task.Run(() => false);
+        private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false));
         private bool ThrowGeneralException(bool _) { throw new Exception(); }
         private bool ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
 

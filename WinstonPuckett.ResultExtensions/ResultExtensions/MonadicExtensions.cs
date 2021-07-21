@@ -76,6 +76,10 @@ namespace WinstonPuckett.ResultExtensions
             }
         }
 
+        // Task<IResult<T>> Action<T>
+        // IResult<T> Func<T, Task>
+        // Task<IResult<T>> Func<T, Task>
+
         // Function Synchronous
 
         public static IResult<U> Bind<T, U>(this T input, Func<T, U> function)
@@ -111,6 +115,19 @@ namespace WinstonPuckett.ResultExtensions
             {
                 var i = await input;
                 return new Ok<U>(function(i));
+            }
+            catch (Exception e)
+            {
+                return new Error<U>(e);
+            }
+        }
+
+        public static async Task<IResult<U>> Bind<T, U>(this Task<IResult<T>> input, Func<T, U> function)
+        {
+            try
+            {
+                var i = await input;
+                return i.Bind(function);
             }
             catch (Exception e)
             {
