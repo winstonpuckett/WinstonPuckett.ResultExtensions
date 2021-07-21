@@ -77,6 +77,11 @@ namespace WinstonPuckett.ResultExtensions
         }
 
         // Task<IResult<T>> Action<T>
+        public static async Task<IResult<T>> Bind<T>(this Task<IResult<T>> input, Action<T> function)
+        {
+            var i = await input;
+            return i.Bind(function);
+        }
         // IResult<T> Func<T, Task>
         // Task<IResult<T>> Func<T, Task>
 
