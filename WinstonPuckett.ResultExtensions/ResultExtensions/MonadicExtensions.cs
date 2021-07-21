@@ -102,5 +102,20 @@ namespace WinstonPuckett.ResultExtensions
                     throw new ArgumentException("Cannot determine whether input is Error or Ok. This might happen if you implement IResult. Try setting a breakpoint on the method before this error and see if it sends back an unexpected IResult type.", nameof(input));
             }
         }
+
+        // Function Asynchronous
+
+        public static async Task<IResult<U>> Bind<T, U>(this Task<T> input, Func<T, U> function)
+        {
+            try
+            {
+                var i = await input;
+                return new Ok<U>(function(i));
+            }
+            catch (Exception e)
+            {
+                return new Error<U>(e);
+            }
+        }
     }
 }
