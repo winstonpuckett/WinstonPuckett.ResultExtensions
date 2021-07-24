@@ -167,5 +167,17 @@ namespace WinstonPuckett.ResultExtensions
                 return new Error<U>(e);
             }
         }
+
+        public static async Task<IResult<U>> Bind<T, U>(this Task<T> input, Func<T, Task<U>> function)
+        {
+            try
+            {
+                return new Ok<U>(await function(await input));
+            }
+            catch (Exception e)
+            {
+                return new Error<U>(e);
+            }
+        }
     }
 }
