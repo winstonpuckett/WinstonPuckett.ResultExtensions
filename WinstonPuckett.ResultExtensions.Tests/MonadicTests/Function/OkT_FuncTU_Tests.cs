@@ -21,14 +21,7 @@ namespace Monads.Functions.Tests
     public class OkTFuncTU_SadPath_Tests
     {
         private readonly IResult<bool> _startingProperty = new Ok<bool>(false);
-        private bool ThrowGeneralException(bool _) { throw new Exception(); }
         private bool ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
-
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public void ExceptionDoesNotBubble()
-        {
-            _startingProperty.Bind(ThrowGeneralException);
-        }
 
         [Fact(DisplayName = "Error holds exception.")]
         public void ErrorHoldsException()

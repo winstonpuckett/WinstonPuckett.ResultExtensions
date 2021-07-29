@@ -33,12 +33,6 @@ namespace Monads.Actions.Tests
         private void ThrowGeneralException(bool _) => throw new Exception();
         private void ThrowNotImplementedException(bool _) => throw new NotImplementedException();
 
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public async Task ExceptionDoesNotBubble()
-        {
-            await _startingProperty.Bind(ThrowGeneralException);
-        }
-
         [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
         public async Task CancelledTokenThrowsNoException()
         {

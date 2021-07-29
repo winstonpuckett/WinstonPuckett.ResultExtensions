@@ -29,16 +29,9 @@ namespace Monads.Functions.Tests
     public class TTaskFuncTU_SadPath_Tests
     {
         private readonly Task<bool> _startingProperty = Task.Run(() => false);
-        private Task<bool> _cancelledStartingProperty
-            => Task.Run(() => false, new System.Threading.CancellationToken(true));
+        private Task<bool> _cancelledStartingProperty => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private bool ThrowGeneralException(bool _) { throw new Exception(); }
         private bool ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
-
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public async Task ExceptionDoesNotBubble()
-        {
-            await _startingProperty.Bind(ThrowGeneralException);
-        }
 
         [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
         public async Task CancelledTokenThrowsNoException()

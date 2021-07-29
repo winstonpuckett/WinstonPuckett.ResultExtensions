@@ -24,12 +24,6 @@ namespace Monads.Actions.Tests
         private void ThrowGeneralException(bool _) { throw new Exception(); }
         private void ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
 
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public void ExceptionDoesNotBubble()
-        {
-            _startingProperty.Bind(ThrowGeneralException);
-        }
-
         [Fact(DisplayName = "Error holds exception.")]
         public void ErrorHoldsException()
         {

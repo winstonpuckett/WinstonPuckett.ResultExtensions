@@ -42,12 +42,6 @@ namespace Monads.Functions.Tests
         private bool ThrowGeneralException(bool _) { throw new Exception(); }
         private bool ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
 
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public async Task ExceptionDoesNotBubble()
-        {
-            await _startingProperty.Bind(ThrowGeneralException);
-        }
-
         [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
         public async Task CancelledTokenThrowsNoException()
         {

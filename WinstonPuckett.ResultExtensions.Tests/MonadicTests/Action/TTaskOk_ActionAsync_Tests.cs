@@ -31,15 +31,7 @@ namespace Monads.Actions.Tests
     public class TaskOkTActionAsync_SadPath_Tests
     {
         private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false));
-        private async Task ThrowGeneralException(bool _) { await Task.Run(() => throw new Exception()); }
         private async Task ThrowNotImplementedException(bool _) { await Task.Run(() => throw new NotImplementedException()); }
-
-
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public async Task ExceptionDoesNotBubble()
-        {
-            await _startingProperty.Bind(ThrowGeneralException);
-        }
 
         [Fact(DisplayName = "Error holds exception.")]
         public async Task ErrorHoldsException()

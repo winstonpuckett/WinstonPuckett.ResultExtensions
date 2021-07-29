@@ -29,14 +29,7 @@ namespace Monads.Actions.Tests
     public class TTaskActionAsync_SadPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
-        private async Task ThrowGeneralException(bool _) { await Task.Run(() => throw new Exception()); }
         private async Task ThrowNotImplementedException(bool _) { await Task.Run(() => throw new NotImplementedException()); }
-
-        [Fact(DisplayName = "Exception doesn't bubble.")]
-        public async Task ExceptionDoesNotBubble()
-        {
-            await _startingProperty.Bind(ThrowGeneralException);
-        }
 
         [Fact(DisplayName = "Error holds exception.")]
         public async Task ErrorHoldsException()
