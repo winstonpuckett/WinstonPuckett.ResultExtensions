@@ -8,6 +8,8 @@ namespace Monads.Functions.Tests
     public class TTaskFuncTTaskU_HappyPath_Tests
     {
         private readonly Task<bool> _startingProperty = Task.Run(() => false);
+        private Task<bool> _cancelledStartingProperty
+            => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private async Task<bool> Flip(bool b)
             => await Task.Run(() => !b);
 
@@ -17,6 +19,12 @@ namespace Monads.Functions.Tests
         {
             var r = await _startingProperty.Bind(Flip);
             Assert.Equal(!await _startingProperty, ((Ok<bool>)r).Value);
+        }
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(Flip);
         }
 
         [Fact(DisplayName = "IResult is Ok<T>.")]
@@ -30,6 +38,8 @@ namespace Monads.Functions.Tests
     public class TTaskFuncTTaskU_SadPath_Tests
     {
         private readonly Task<bool> _startingProperty = Task.Run(() => false);
+        private Task<bool> _cancelledStartingProperty
+            => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private async Task<bool> ThrowGeneralException(bool _) { await Task.Run(() => throw new Exception()); return false; }
         private async Task<bool> ThrowNotImplementedException(bool _) { await Task.Run(() => throw new NotImplementedException()); return false; }
 
@@ -37,6 +47,12 @@ namespace Monads.Functions.Tests
         public async Task ExceptionDoesNotBubble()
         {
             await _startingProperty.Bind(ThrowGeneralException);
+        }
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(ThrowGeneralException);
         }
 
         [Fact(DisplayName = "IResult is Error<T>.")]

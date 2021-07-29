@@ -9,6 +9,8 @@ namespace Monads.Functions.Tests
     {
         private readonly static string _initialErrorMessage = "I am the initial error message.";
         private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Error<bool>(new Exception(_initialErrorMessage)));
+        private Task<IResult<bool>> _cancelledStartingProperty
+            => Task.Run(() => (IResult<bool>)new Error<bool>(new Exception(_initialErrorMessage)), new System.Threading.CancellationToken(true));
         private async Task<bool> Flip(bool b)
             => await Task.Run(() => !b);
         private async Task<bool> ThrowNotImplementedException(bool _) { await Task.Run(() => throw new NotImplementedException()); return false; }
@@ -19,6 +21,12 @@ namespace Monads.Functions.Tests
         {
             var r = await _startingProperty.Bind(Flip);
             Assert.True(r is Error<bool>);
+        }
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(Flip);
         }
 
         [Fact(DisplayName = "IResult does not call after Error")]
