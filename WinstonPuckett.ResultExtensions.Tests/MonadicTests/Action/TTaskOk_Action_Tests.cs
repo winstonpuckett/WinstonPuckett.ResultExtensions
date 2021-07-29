@@ -8,6 +8,8 @@ namespace Monads.Actions.Tests
     public class TaskOkTAction_HappyPath_Tests
     {
         private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false));
+        private Task<IResult<bool>> _cancelledStartingProperty
+            => Task.Run(() => (IResult<bool>)new Ok<bool>(false), new System.Threading.CancellationToken(true));
         private void DoNothing(bool _) { }
 
 
@@ -16,6 +18,12 @@ namespace Monads.Actions.Tests
         {
             var r = await _startingProperty.Bind(DoNothing);
             Assert.False(((Ok<bool>)r).Value);
+        }
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(DoNothing);
         }
 
         [Fact(DisplayName = "IResult is Ok<T>.")]

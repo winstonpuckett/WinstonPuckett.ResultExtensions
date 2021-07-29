@@ -8,6 +8,8 @@ namespace Monads.Actions.Tests
     public class TTaskAction_HappyPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
+        private Task<bool> _cancelledStartingProperty
+            => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private void DoNothing(bool _) { }
 
 
@@ -17,7 +19,13 @@ namespace Monads.Actions.Tests
             var r = await _startingProperty.Bind(DoNothing);
             Assert.False(((Ok<bool>)r).Value);
         }
-     
+
+        [Fact(DisplayName = "Cancelled token doesn't throw exception.")]
+        public async Task CancelledTokenThrowsNoException()
+        {
+            await _cancelledStartingProperty.Bind(DoNothing);
+        }
+
         [Fact(DisplayName = "IResult is Ok<T>.")]
         public async Task ReturnsOk()
         {
@@ -29,8 +37,8 @@ namespace Monads.Actions.Tests
     public class TTaskAction_SadPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
-        private Task<bool> _cancelledStartingProperty 
-            => Task.Run(()=>false, new System.Threading.CancellationToken(true));
+        private Task<bool> _cancelledStartingProperty
+            => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private void ThrowGeneralException(bool _) => throw new Exception();
         private void ThrowNotImplementedException(bool _) => throw new NotImplementedException();
 
