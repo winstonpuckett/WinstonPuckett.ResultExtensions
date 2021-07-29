@@ -8,10 +8,8 @@ namespace Monads.Functions.Tests
     public class TTaskFuncTU_HappyPath_Tests
     {
         private readonly Task<bool> _startingProperty = Task.Run(() => false);
-        private Task<bool> _cancelledStartingProperty
-            => Task.Run(() => false, new System.Threading.CancellationToken(true));
-        private bool Flip(bool b)
-            => !b;
+        private Task<bool> _cancelledStartingProperty => Task.Run(() => false, new System.Threading.CancellationToken(true));
+        private bool Flip(bool b) => !b;
 
 
         [Fact(DisplayName = "Value returns flip of value.")]
@@ -25,13 +23,6 @@ namespace Monads.Functions.Tests
         public async Task CancelledTokenThrowsNoException()
         {
             await _cancelledStartingProperty.Bind(Flip);
-        }
-
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public async Task ReturnsOk()
-        {
-            var r = await _startingProperty.Bind(Flip);
-            Assert.True(r is Ok<bool>);
         }
     }
 
@@ -53,13 +44,6 @@ namespace Monads.Functions.Tests
         public async Task CancelledTokenThrowsNoException()
         {
             await _cancelledStartingProperty.Bind(ThrowGeneralException);
-        }
-
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

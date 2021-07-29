@@ -55,13 +55,6 @@ namespace Monads.Functions.Tests
             await _cancelledStartingProperty.Bind(ThrowGeneralException);
         }
 
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
-        }
-
         [Fact(DisplayName = "Error holds exception.")]
         public async Task ErrorHoldsException()
         {

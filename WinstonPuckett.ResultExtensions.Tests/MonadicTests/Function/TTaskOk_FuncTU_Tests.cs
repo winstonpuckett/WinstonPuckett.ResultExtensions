@@ -38,8 +38,7 @@ namespace Monads.Functions.Tests
     public class TaskOkTFuncTU_SadPath_Tests
     {
         private Task<IResult<bool>> _startingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false));
-        private Task<IResult<bool>> _cancelledStartingProperty
-            => Task.Run(() => (IResult<bool>)new Ok<bool>(false), new System.Threading.CancellationToken(true));
+        private Task<IResult<bool>> _cancelledStartingProperty => Task.Run(() => (IResult<bool>)new Ok<bool>(false), new System.Threading.CancellationToken(true));
         private bool ThrowGeneralException(bool _) { throw new Exception(); }
         private bool ThrowNotImplementedException(bool _) { throw new NotImplementedException(); }
 
@@ -53,13 +52,6 @@ namespace Monads.Functions.Tests
         public async Task CancelledTokenThrowsNoException()
         {
             await _cancelledStartingProperty.Bind(ThrowGeneralException);
-        }
-
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

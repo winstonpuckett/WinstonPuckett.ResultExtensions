@@ -8,8 +8,7 @@ namespace Monads.Functions.Tests
     public class TFuncTTaskU_HappyPath_Tests
     {
         private readonly bool _startingProperty = false;
-        private async Task<bool> Flip(bool b)
-            => await Task.Run(() => !b);
+        private async Task<bool> Flip(bool b) => await Task.Run(() => !b);
 
 
         [Fact(DisplayName = "Value returns flip of value.")]
@@ -17,13 +16,6 @@ namespace Monads.Functions.Tests
         {
             var r = await _startingProperty.Bind(Flip);
             Assert.Equal(!_startingProperty, ((Ok<bool>)r).Value);
-        }
-
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public async Task ReturnsOk()
-        {
-            var r = await _startingProperty.Bind(Flip);
-            Assert.True(r is Ok<bool>);
         }
     }
 
@@ -37,13 +29,6 @@ namespace Monads.Functions.Tests
         public async Task ExceptionDoesNotBubble()
         {
             await _startingProperty.Bind(ThrowGeneralException);
-        }
-
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

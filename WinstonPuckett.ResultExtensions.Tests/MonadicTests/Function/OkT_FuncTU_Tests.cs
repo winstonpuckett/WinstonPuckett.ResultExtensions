@@ -7,8 +7,7 @@ namespace Monads.Functions.Tests
     public class OkTFuncTU_HappyPath_Tests
     {
         private readonly IResult<bool> _startingProperty = new Ok<bool>(false);
-        private bool Flip(bool b) 
-            => !b;
+        private bool Flip(bool b) => !b;
 
 
         [Fact(DisplayName = "Value returns flip of value.")]
@@ -16,13 +15,6 @@ namespace Monads.Functions.Tests
         {
             var r = _startingProperty.Bind(Flip);
             Assert.Equal(!((Ok<bool>)_startingProperty).Value, ((Ok<bool>)r).Value);
-        }
-     
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public void ReturnsOk()
-        {
-            var r = _startingProperty.Bind(Flip);
-            Assert.True(r is Ok<bool>);
         }
     }
 
@@ -36,13 +28,6 @@ namespace Monads.Functions.Tests
         public void ExceptionDoesNotBubble()
         {
             _startingProperty.Bind(ThrowGeneralException);
-        }
-        
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public void IResultIsError()
-        {
-            var r = _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

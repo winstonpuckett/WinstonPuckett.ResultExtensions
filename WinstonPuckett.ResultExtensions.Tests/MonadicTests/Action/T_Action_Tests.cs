@@ -16,13 +16,6 @@ namespace Monads.Actions.Tests
             var r = _startingProperty.Bind(DoNothing);
             Assert.False(((Ok<bool>)r).Value);
         }
-     
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public void ReturnsOk()
-        {
-            var r = _startingProperty.Bind(DoNothing);
-            Assert.True(r is Ok<bool>);
-        }
     }
 
     public class TAction_SadPath_Tests
@@ -35,13 +28,6 @@ namespace Monads.Actions.Tests
         public void ExceptionDoesNotBubble()
         {
             _startingProperty.Bind(ThrowGeneralException);
-        }
-        
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public void IResultIsError()
-        {
-            var r = _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

@@ -7,22 +7,13 @@ namespace Monads.Functions.Tests
     public class TFuncTU_HappyPath_Tests
     {
         private readonly bool _startingProperty = false;
-        private bool Flip(bool b) 
-            => !b;
-
+        private bool Flip(bool b) => !b;
 
         [Fact(DisplayName = "Value returns flip of value.")]
         public void ReturnsFlippedValue()
         {
             var r = _startingProperty.Bind(Flip);
             Assert.Equal(!_startingProperty, ((Ok<bool>)r).Value);
-        }
-     
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public void ReturnsOk()
-        {
-            var r = _startingProperty.Bind(Flip);
-            Assert.True(r is Ok<bool>);
         }
     }
 
@@ -36,13 +27,6 @@ namespace Monads.Functions.Tests
         public void ExceptionDoesNotBubble()
         {
             _startingProperty.Bind(ThrowGeneralException);
-        }
-        
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public void IResultIsError()
-        {
-            var r = _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

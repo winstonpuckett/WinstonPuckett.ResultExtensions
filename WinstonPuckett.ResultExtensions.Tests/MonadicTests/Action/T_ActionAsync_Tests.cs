@@ -17,13 +17,6 @@ namespace Monads.Actions.Tests
             var r = await _startingProperty.Bind(DoNothingAsync);
             Assert.False(((Ok<bool>)r).Value);
         }
-     
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public async Task ReturnsOk()
-        {
-            var r = await _startingProperty.Bind(DoNothingAsync);
-            Assert.True(r is Ok<bool>);
-        }
     }
 
     public class TActionAsync_SadPath_Tests
@@ -36,13 +29,6 @@ namespace Monads.Actions.Tests
         public async Task ExceptionDoesNotBubble()
         {
             await _startingProperty.Bind(ThrowGeneralException);
-        }
-        
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]

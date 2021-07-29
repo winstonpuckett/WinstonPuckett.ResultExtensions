@@ -8,8 +8,7 @@ namespace Monads.Actions.Tests
     public class TTaskActionAsync_HappyPath_Tests
     {
         private Task<bool> _startingProperty => Task.Run(() => false);
-        private Task<bool> _cancelledStartingProperty
-            => Task.Run(() => false, new System.Threading.CancellationToken(true));
+        private Task<bool> _cancelledStartingProperty => Task.Run(() => false, new System.Threading.CancellationToken(true));
         private async Task DoNothingAsync(bool _) { await Task.Run(()=>{}); }
 
 
@@ -25,13 +24,6 @@ namespace Monads.Actions.Tests
         {
             await _cancelledStartingProperty.Bind(DoNothingAsync);
         }
-
-        [Fact(DisplayName = "IResult is Ok<T>.")]
-        public async Task ReturnsOk()
-        {
-            var r = await _startingProperty.Bind(DoNothingAsync);
-            Assert.True(r is Ok<bool>);
-        }
     }
 
     public class TTaskActionAsync_SadPath_Tests
@@ -44,13 +36,6 @@ namespace Monads.Actions.Tests
         public async Task ExceptionDoesNotBubble()
         {
             await _startingProperty.Bind(ThrowGeneralException);
-        }
-        
-        [Fact(DisplayName = "IResult is Error<T>.")]
-        public async Task IResultIsError()
-        {
-            var r = await _startingProperty.Bind(ThrowGeneralException);
-            Assert.True(r is Error<bool>);
         }
 
         [Fact(DisplayName = "Error holds exception.")]
