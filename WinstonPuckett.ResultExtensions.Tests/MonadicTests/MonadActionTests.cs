@@ -25,7 +25,7 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
 
         // Functions to bind on.
         private void EmitNothing(bool _) { }
-        private async Task EmitNothingAsync(bool _) { await Task.Run(()=>{}); }
+        private async Task EmitNothingAsync(bool _) { await Task.Run(() => { }); }
         private void EmitNotImplementedException(bool _) { throw new NotImplementedException(); }
         private async Task EmitNotImplementedExceptionAsync(bool _) { await Task.Run(() => throw new NotImplementedException()); }
 
