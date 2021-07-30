@@ -23,4 +23,8 @@
     <ProjectReference Include="..\WinstonPuckett.ResultExtensions\WinstonPuckett.ResultExtensions.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="MonadicTests\Action\" />
+  </ItemGroup>
+
 </Project>
