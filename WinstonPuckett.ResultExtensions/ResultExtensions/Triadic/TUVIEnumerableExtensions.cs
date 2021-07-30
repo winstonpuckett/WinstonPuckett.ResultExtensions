@@ -205,7 +205,7 @@ namespace WinstonPuckett.ResultExtensions
             }
         }
 
-        public static async Task<IResult<IEnumerable<W>>> Bind<T, U, V, W>(this IResult<(T, U)> input, IEnumerable<Func<T, U, V, Task<W>>> functions)
+        public static async Task<IResult<IEnumerable<W>>> Bind<T, U, V, W>(this IResult<(T, U, V)> input, IEnumerable<Func<T, U, V, Task<W>>> functions)
         {
             switch (input)
             {
@@ -218,7 +218,7 @@ namespace WinstonPuckett.ResultExtensions
             }
         }
 
-        public static async Task<IResult<IEnumerable<W>>> Bind<T, U, V, W>(this Task<IResult<(T, U)>> input, IEnumerable<Func<T, U, V, Task<W>>> functions)
+        public static async Task<IResult<IEnumerable<W>>> Bind<T, U, V, W>(this Task<IResult<(T, U, V)>> input, IEnumerable<Func<T, U, V, Task<W>>> functions)
         {
             try
             {

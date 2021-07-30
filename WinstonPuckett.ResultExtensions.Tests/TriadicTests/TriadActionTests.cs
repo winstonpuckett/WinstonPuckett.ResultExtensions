@@ -1,0 +1,270 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace WinstonPuckett.ResultExtensions.Tests.TriadicTests
+{
+    public class TriadActionTests
+    {
+        // General data.
+        private readonly static string _anyUniqueErrorMessage = "I am the initial error message.";
+
+        // Input to bind.
+        private readonly (bool, bool, bool) _falseFalse = (false, false, false);
+        private readonly Task<(bool, bool, bool)> _taskFalseFalse = Task.Run(() => (false, false, false));
+        private readonly Task<(bool, bool, bool)> _taskCancelledFalseFalse = Task.Run(() => (false, false, false), new System.Threading.CancellationToken(true));
+        private readonly IResult<(bool, bool, bool)> _okFalse = new Ok<(bool, bool, bool)>((false, false, false));
+        private readonly Task<IResult<(bool, bool, bool)>> _taskOkFalse = Task.Run(() => (IResult<(bool, bool, bool)>)new Ok<(bool, bool, bool)>((false, false, false)));
+        private readonly Task<IResult<(bool, bool, bool)>> _taskCancelledOkFalse = Task.Run(() => (IResult<(bool, bool, bool)>)new Ok<(bool, bool, bool)>((false, false, false)), new System.Threading.CancellationToken(true));
+        private readonly IResult<(bool, bool, bool)> _errorFalse = new Error<(bool, bool, bool)>(new Exception(_anyUniqueErrorMessage));
+        private readonly Task<IResult<(bool, bool, bool)>> _taskErrorFalse = Task.Run(() => (IResult<(bool, bool, bool)>)new Error<(bool, bool, bool)>(new Exception(_anyUniqueErrorMessage)));
+        private readonly Task<IResult<(bool, bool, bool)>> _taskCancelledErrorFalse = Task.Run(() => (IResult<(bool, bool, bool)>)new Error<(bool, bool, bool)>(new Exception(_anyUniqueErrorMessage)), new System.Threading.CancellationToken(true));
+
+        // Functions to bind on.
+        private void EmitNothing(bool _, bool _2, bool _3) { }
+        private async Task EmitNothingAsync(bool _, bool _2, bool _3) { await Task.Run(() => { }); }
+        private void EmitNotImplementedException(bool _, bool _2, bool _3) { throw new NotImplementedException(); }
+        private async Task EmitNotImplementedExceptionAsync(bool _, bool _2, bool _3) { await Task.Run(() => throw new NotImplementedException()); }
+
+        // T -> Emit
+
+        [Fact(DisplayName = "T holds original value.")]
+        public void THoldsOriginalValue()
+        {
+            var r = _falseFalse.Bind(EmitNothing);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "T holds original value async.")]
+        public async Task THoldsOriginalValueAsync()
+        {
+            var r = await _falseFalse.Bind(EmitNothingAsync);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "T to Exception carries what is thrown.")]
+        public void TToExceptionCarriesWhatIsThrown()
+        {
+            var r = _falseFalse.Bind(EmitNotImplementedException);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "T to Exception carries what is thrown async.")]
+        public async Task TToExceptionCarriesWhatIsThrownAsync()
+        {
+            var r = await _falseFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        // T Task -> Emit
+
+        [Fact(DisplayName = "T Task holds original value.")]
+        public async Task TTaskHoldsOriginalValue()
+        {
+            var r = await _taskFalseFalse.Bind(EmitNothing);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "T Task holds original value async.")]
+        public async Task TTaskHoldsOriginalValueAsync()
+        {
+            var r = await _taskFalseFalse.Bind(EmitNothingAsync);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "T Task to Exception carries what is thrown.")]
+        public async Task TTaskToExceptionCarriesWhatIsThrown()
+        {
+            var r = await _taskFalseFalse.Bind(EmitNotImplementedException);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "T Task to Exception carries what is thrown async.")]
+        public async Task TTaskToExceptionCarriesWhatIsThrownAsync()
+        {
+            var r = await _taskFalseFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "T Task honors cancellation token.")]
+        public async Task TTaskHonorsCancellationToken()
+        {
+            var r = await _taskCancelledFalseFalse.Bind(EmitNothing);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        [Fact(DisplayName = "T Task honors cancellation token async.")]
+        public async Task TTaskHonorsCancellationTokenAsync()
+        {
+            var r = await _taskCancelledFalseFalse.Bind(EmitNothingAsync);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        // Ok -> Emit
+
+        [Fact(DisplayName = "Ok holds original value.")]
+        public void OkHoldsOriginalValue()
+        {
+            var r = _okFalse.Bind(EmitNothing);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "Ok holds original value async.")]
+        public async Task OkHoldsOriginalValueAsync()
+        {
+            var r = await _okFalse.Bind(EmitNothingAsync);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "Ok to Exception carries what is thrown.")]
+        public void OkToExceptionCarriesWhatIsThrown()
+        {
+            var r = _okFalse.Bind(EmitNotImplementedException);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Ok to Exception carries what is thrown async.")]
+        public async Task OkToExceptionCarriesWhatIsThrownAsync()
+        {
+            var r = await _okFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        // Ok Task -> Emit
+
+        [Fact(DisplayName = "Ok Task holds original value.")]
+        public async Task OkTaskHoldsOriginalValue()
+        {
+            var r = await _taskOkFalse.Bind(EmitNothing);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "Ok Task holds original value async.")]
+        public async Task OkTaskHoldsOriginalValueAsync()
+        {
+            var r = await _taskOkFalse.Bind(EmitNothingAsync);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item1);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item2);
+            Assert.False(((Ok<(bool, bool, bool)>)r).Value.Item3);
+        }
+
+        [Fact(DisplayName = "Ok Task honors cancellation token.")]
+        public async Task OkTaskHonorsCancellationToken()
+        {
+            var r = await _taskCancelledOkFalse.Bind(EmitNothing);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        [Fact(DisplayName = "Ok Task honors cancellation token async.")]
+        public async Task OkTaskHonorsCancellationTokenAsync()
+        {
+            var r = await _taskCancelledOkFalse.Bind(EmitNothingAsync);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        [Fact(DisplayName = "Ok Task to Exception carries what is thrown.")]
+        public async Task OkTaskToExceptionCarriesWhatIsThrown()
+        {
+            var r = await _taskOkFalse.Bind(EmitNotImplementedException);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Ok Task to Exception carries what is thrown async.")]
+        public async Task OkTaskToExceptionCarriesWhatIsThrownAsync()
+        {
+            var r = await _taskOkFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.True((r as Error<(bool, bool, bool)>).Exception is NotImplementedException);
+        }
+
+        // Error -> Emit
+
+        [Fact(DisplayName = "Error does not bind.")]
+        public void ErrorDoesNotCallSubsequentMethod()
+        {
+            var r = _errorFalse.Bind(EmitNotImplementedException);
+            Assert.False(((Error<(bool, bool, bool)>)r).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Error retains original message.")]
+        public void ErrorContainsOriginalError()
+        {
+            var r = _errorFalse.Bind(EmitNotImplementedException);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<(bool, bool, bool)>)r).Exception.Message);
+        }
+
+        [Fact(DisplayName = "Error does not bind async.")]
+        public async Task DoesNotContainNewErrorAsync()
+        {
+            var r = await _errorFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.False(((Error<(bool, bool, bool)>)r).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Error retains original message async.")]
+        public async Task ErrorContainsOriginalErrorAsync()
+        {
+            var r = await _errorFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<(bool, bool, bool)>)r).Exception.Message);
+        }
+
+        // Error Task -> Emit
+
+        [Fact(DisplayName = "Error Task honors cancellation token.")]
+        public async Task ErrorTaskHonorsCancellationToken()
+        {
+            var r = await _taskCancelledErrorFalse.Bind(EmitNothing);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        [Fact(DisplayName = "Error Task honors cancellation token async.")]
+        public async Task ErrorTaskHonorsCancellationTokenAsync()
+        {
+            var r = await _taskCancelledErrorFalse.Bind(EmitNothingAsync);
+            Assert.True(((Error<(bool, bool, bool)>)r).Exception is TaskCanceledException);
+        }
+
+        [Fact(DisplayName = "Error Task does not bind.")]
+        public async Task ErrorTaskDoesNotBind()
+        {
+            var r = await _taskErrorFalse.Bind(EmitNotImplementedException);
+            Assert.False(((Error<(bool, bool, bool)>)r).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Error Task does not bind async.")]
+        public async Task ErrorTaskDoesNotBindAsync()
+        {
+            var r = await _taskErrorFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.False(((Error<(bool, bool, bool)>)r).Exception is NotImplementedException);
+        }
+
+        [Fact(DisplayName = "Error Task retains original message.")]
+        public async Task ErrorTaskRetainsOriginalMessage()
+        {
+            var r = await _taskErrorFalse.Bind(EmitNotImplementedException);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<(bool, bool, bool)>)r).Exception.Message);
+        }
+
+        [Fact(DisplayName = "Error Task retains original message async.")]
+        public async Task ErrorTaskRetainsOriginalMessageAsync()
+        {
+            var r = await _taskErrorFalse.Bind(EmitNotImplementedExceptionAsync);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<(bool, bool, bool)>)r).Exception.Message);
+        }
+    }
+}
