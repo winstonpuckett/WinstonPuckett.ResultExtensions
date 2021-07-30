@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
 {
-    public class MonadFunctionTests
+    public class MonadParamsFunctionTests
     {
         // General data.
         private readonly static string _anyUniqueErrorMessage = "I am the initial error message.";
@@ -32,29 +35,29 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "T transforms to U.")]
         public void TTransformsToU()
         {
-            var r = _false.Bind(Flip);
-            Assert.Equal(!_false, ((Ok<bool>)r).Value);
+            var r = _false.Bind(Flip, Flip);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "T transforms to U async.")]
         public async Task TTransformsToUAsync()
         {
-            var r = await _false.Bind(FlipAsync);
-            Assert.Equal(!_false, ((Ok<bool>)r).Value);
+            var r = await _false.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "T to Exception carries what is thrown.")]
         public void TToExceptionCarriesWhatIsThrown()
         {
-            var r = _false.Bind(ThrowNotImplementedException);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = _false.Bind(Flip, ThrowNotImplementedException);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "T to Exception carries what is thrown async.")]
         public async Task TToExceptionCarriesWhatIsThrownAsync()
         {
-            var r = await _false.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _false.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         // T Task -> U
@@ -62,43 +65,43 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "T Task transforms to U.")]
         public async Task TTaskTransformsToU()
         {
-            var r = await _taskFalse.Bind(Flip);
-            Assert.Equal(!await _taskFalse, ((Ok<bool>)r).Value);
+            var r = await _taskFalse.Bind(Flip, Flip);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "T Task transforms to U async.")]
         public async Task TTaskTransformsToUAsync()
         {
-            var r = await _taskFalse.Bind(FlipAsync);
-            Assert.Equal(!await _taskFalse, ((Ok<bool>)r).Value);
+            var r = await _taskFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "T Task honors cancellation token.")]
         public async Task TTaskHonorsCancellationToken()
         {
-            var r = await _taskCancelledFalse.Bind(Flip);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledFalse.Bind(Flip, Flip);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "T Task honors cancellation token async.")]
         public async Task TTaskHonorsCancellationTokenAsync()
         {
-            var r = await _taskCancelledFalse.Bind(FlipAsync);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "T Task to Exception carries what is thrown.")]
         public async Task TTaskToExceptionCarriesWhatIsThrown()
         {
-            var r = await _taskFalse.Bind(ThrowNotImplementedException);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _taskFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "T Task to Exception carries what is thrown async.")]
         public async Task TTaskToExceptionCarriesWhatIsThrownAsync()
         {
-            var r = await _taskFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _taskFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         // Ok -> U
@@ -106,15 +109,15 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "Ok transforms to U.")]
         public void OkTransformsToU()
         {
-            var r = _okFalse.Bind(Flip);
-            Assert.Equal(!((Ok<bool>)_okFalse).Value, ((Ok<bool>)r).Value);
+            var r = _okFalse.Bind(Flip, Flip);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "Ok transforms to U async.")]
         public async Task OkTransformsToUAsync()
         {
-            var r = await _okFalse.Bind(FlipAsync);
-            Assert.Equal(!((Ok<bool>)_okFalse).Value, ((Ok<bool>)r).Value);
+            var r = await _okFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "Ok to Exception carries what is thrown.")]
@@ -127,8 +130,8 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "Ok to Exception carries what is thrown async.")]
         public async Task OkToExceptionCarriesWhatIsThrownAsync()
         {
-            var r = await _okFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _okFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         // Ok Task -> U
@@ -136,43 +139,43 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "Ok Task transforms to U.")]
         public async Task OkTaskTransformsToU()
         {
-            var r = await _taskOkFalse.Bind(Flip);
-            Assert.Equal(!((Ok<bool>)await _taskOkFalse).Value, ((Ok<bool>)r).Value);
+            var r = await _taskOkFalse.Bind(Flip, Flip);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "Ok Task transforms to U async.")]
         public async Task OkTaskTransformsToUAsync()
         {
-            var r = await _taskOkFalse.Bind(FlipAsync);
-            Assert.Equal(!((Ok<bool>)await _taskOkFalse).Value, ((Ok<bool>)r).Value);
+            var r = await _taskOkFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Ok<IEnumerable<bool>>)r).Value.All(b => b == !_false));
         }
 
         [Fact(DisplayName = "Ok Task honors cancellation token.")]
         public async Task OkTaskHonorsCancellationToken()
         {
-            var r = await _taskCancelledOkFalse.Bind(Flip);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledOkFalse.Bind(Flip, Flip);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "Ok Task honors cancellation token async.")]
         public async Task OkTaskHonorsCancellationTokenAsync()
         {
-            var r = await _taskCancelledOkFalse.Bind(FlipAsync);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledOkFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "Ok Task to Exception carries what is thrown.")]
         public async Task OkTaskToExceptionCarriesWhatIsThrown()
         {
-            var r = await _taskOkFalse.Bind(ThrowNotImplementedException);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _taskOkFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "Ok Task to Exception carries what is thrown async.")]
         public async Task OkTaskToExceptionCarriesWhatIsThrownAsync()
         {
-            var r = await _taskOkFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.True((r as Error<bool>).Exception is NotImplementedException);
+            var r = await _taskOkFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.True((r as Error<IEnumerable<bool>>).Exception is NotImplementedException);
         }
 
         // Error -> U
@@ -180,29 +183,29 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "Error does not bind.")]
         public void ErrorDoesNotBind()
         {
-            var r = _errorFalse.Bind(ThrowNotImplementedException);
-            Assert.False(((Error<bool>)r).Exception is NotImplementedException);
+            var r = _errorFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.False(((Error<IEnumerable<bool>>)r).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "Error does not bind async.")]
         public async Task ErrorDoesNotBindAsync()
         {
-            var r = await _errorFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.False(((Error<bool>)r).Exception is NotImplementedException);
+            var r = await _errorFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.False(((Error<IEnumerable<bool>>)r).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "Error retains original message.")]
         public void ErrorContainsOriginalError()
         {
-            var r = _errorFalse.Bind(ThrowNotImplementedException);
-            Assert.Equal(_anyUniqueErrorMessage, ((Error<bool>)r).Exception.Message);
+            var r = _errorFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<IEnumerable<bool>>)r).Exception.Message);
         }
 
         [Fact(DisplayName = "Error retains original message async.")]
         public async Task ErrorContainsOriginalErrorAsync()
         {
-            var r = await _errorFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.Equal(_anyUniqueErrorMessage, ((Error<bool>)r).Exception.Message);
+            var r = await _errorFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<IEnumerable<bool>>)r).Exception.Message);
         }
 
         // Error Task -> U
@@ -210,43 +213,43 @@ namespace WinstonPuckett.ResultExtensions.Tests.MonadicTests
         [Fact(DisplayName = "Error Task honors cancellation token.")]
         public async Task ErrorTaskHonorsCancellationToken()
         {
-            var r = await _taskCancelledErrorFalse.Bind(Flip);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledErrorFalse.Bind(Flip, Flip);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "Error Task honors cancellation token async.")]
         public async Task ErrorTaskHonorsCancellationTokenAsync()
         {
-            var r = await _taskCancelledErrorFalse.Bind(FlipAsync);
-            Assert.True(((Error<bool>)r).Exception is TaskCanceledException);
+            var r = await _taskCancelledErrorFalse.Bind(FlipAsync, FlipAsync);
+            Assert.True(((Error<IEnumerable<bool>>)r).Exception is TaskCanceledException);
         }
 
         [Fact(DisplayName = "Error Task does not bind.")]
         public async Task ErrorTaskDoesNotBind()
         {
-            var r = await _taskErrorFalse.Bind(ThrowNotImplementedException);
-            Assert.False(((Error<bool>)r).Exception is NotImplementedException);
+            var r = await _taskErrorFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.False(((Error<IEnumerable<bool>>)r).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "Error Task does not bind async.")]
         public async Task ErrorTaskDoesNotBindAsync()
         {
-            var r = await _taskErrorFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.False(((Error<bool>)r).Exception is NotImplementedException);
+            var r = await _taskErrorFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.False(((Error<IEnumerable<bool>>)r).Exception is NotImplementedException);
         }
 
         [Fact(DisplayName = "Error Task retains original message.")]
         public async Task ErrorTaskRetainsOriginalMessage()
         {
-            var r = await _taskErrorFalse.Bind(ThrowNotImplementedException);
-            Assert.Equal(_anyUniqueErrorMessage, ((Error<bool>)r).Exception.Message);
+            var r = await _taskErrorFalse.Bind(Flip, ThrowNotImplementedException);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<IEnumerable<bool>>)r).Exception.Message);
         }
 
         [Fact(DisplayName = "Error Task retains original message async.")]
         public async Task ErrorTaskRetainsOriginalMessageAsync()
         {
-            var r = await _taskErrorFalse.Bind(ThrowNotImplementedExceptionAsync);
-            Assert.Equal(_anyUniqueErrorMessage, ((Error<bool>)r).Exception.Message);
+            var r = await _taskErrorFalse.Bind(FlipAsync, ThrowNotImplementedExceptionAsync);
+            Assert.Equal(_anyUniqueErrorMessage, ((Error<IEnumerable<bool>>)r).Exception.Message);
         }
     }
 }

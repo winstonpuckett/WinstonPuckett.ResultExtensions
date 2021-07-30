@@ -130,7 +130,7 @@ namespace WinstonPuckett.ResultExtensions
         {
             try
             {
-                return new Ok<IEnumerable<U>>(functions.Select(f => f(input)));
+                return new Ok<IEnumerable<U>>(functions.Select(f => f(input)).ToList());
             }
             catch (Exception e)
             {
@@ -158,7 +158,7 @@ namespace WinstonPuckett.ResultExtensions
             try
             {
                 var i = await input;
-                return new Ok<IEnumerable<U>>(functions.Select(f => f(i)));
+                return new Ok<IEnumerable<U>>(functions.Select(f => f(i)).ToList());
             }
             catch (Exception e)
             {
@@ -183,7 +183,7 @@ namespace WinstonPuckett.ResultExtensions
         {
             try
             {
-                return new Ok<IEnumerable<U>>(await Task.WhenAll(functions.Select(f => f(input))));
+                return new Ok<IEnumerable<U>>(await Task.WhenAll(functions.Select(f => f(input)).ToList()));
             }
             catch (Exception e)
             {
