@@ -1,7 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Company>WinstonPuckett</Company>
+    <PackageIcon>icon.png</PackageIcon>
+    <RepositoryUrl>https://github.com/winstonpuckett/WinstonPuckett.ResultExtensions</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/winstonpuckett/WinstonPuckett.ResultExtensions</PackageProjectUrl>
+    <PackageTags>functional;result monad;unwrap;result;error handling</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Description>Easily replace Try/Catch with Result monads.</Description>
   </PropertyGroup>
 
 </Project>
