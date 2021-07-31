@@ -6,9 +6,16 @@
     <PackageIcon>icon.png</PackageIcon>
     <RepositoryUrl>https://github.com/winstonpuckett/WinstonPuckett.ResultExtensions</RepositoryUrl>
     <PackageProjectUrl>https://github.com/winstonpuckett/WinstonPuckett.ResultExtensions</PackageProjectUrl>
-    <PackageTags>functional;result monad;unwrap;result;error handling</PackageTags>
+    <PackageTags>functional;result monad;unwrap;error handling</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Easily replace Try/Catch with Result monads.</Description>
   </PropertyGroup>
-
+  
+  <ItemGroup>
+    <None Include="Icon\icon.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+  
 </Project>
